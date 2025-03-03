@@ -1,25 +1,26 @@
-name: Deploy Text File to EC2
+name: Deploy to EC2
 
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
+      - main # Trigger on pushes to the main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.EC2_SSH_KEY }}  # Private SSH key
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}  # Known hosts for SSH
-
-      - name: Deploy text file to EC2
-        run: |
-          scp -i ${{ secrets.EC2_SSH_KEY }} example.txt ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/example.txt
+    - name: Deploy text file to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          echo "Deploying text file..."
+          mkdir -p /home/${{ secrets.EC2_USER }}/deployments
+          echo "This is a sample text file" > /home/${{ secrets.EC2_USER }}/deployments/example.txt
+          echo "Deployment complete!"
