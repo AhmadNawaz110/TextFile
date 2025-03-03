@@ -1,0 +1,1 @@
+Hello, this is a text file deployed to EC2 using GitHub Actions!
